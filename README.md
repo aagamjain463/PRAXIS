@@ -9,12 +9,17 @@ See [`PRODUCT.md`](./PRODUCT.md) for the long-term product direction and
 
 ## Current milestone
 
-**Milestone 1 — Project Foundation.** This repository contains a clean
-Next.js foundation only:
+**Milestone 2 — Application Shell & Navigation.** The repository now contains
+the shared Praxis application shell in addition to the Milestone 1 foundation:
 
 - Next.js (App Router) + React + TypeScript + Tailwind CSS + ESLint
-- One simple, responsive Praxis foundation screen
-- A lightweight test setup (Vitest + Testing Library) with a smoke test
+- Shared application shell: persistent desktop sidebar, mobile header plus
+  bottom navigation, and a consistent content area
+- Routes: `/` (Home), `/insights`, `/actions`, `/review` — honest empty
+  states only, no product functionality yet
+- Accessible active navigation state (`aria-current="page"`, not color alone)
+- A lightweight test setup (Vitest + Testing Library) covering pages,
+  navigation links, active state, and shell semantics
 - `PRODUCT.md`, `AGENTS.md`, `.env.example`, and this README
 
 No backend, database, auth, Insights, Actions, AI, reminders, or browser
@@ -83,13 +88,24 @@ npm run start
 ```text
 Praxis/
 ├── app/
-│   ├── layout.tsx      # Root layout + metadata
-│   ├── page.tsx        # Single Praxis foundation screen
-│   ├── globals.css     # Tailwind + theme tokens
+│   ├── actions/page.tsx    # Actions empty state
+│   ├── insights/page.tsx   # Insights empty state
+│   ├── review/page.tsx     # Review empty state
+│   ├── layout.tsx          # Root layout + metadata + AppShell
+│   ├── page.tsx            # Home empty state
+│   ├── globals.css         # Tailwind + theme tokens
 │   └── favicon.ico
+├── components/
+│   ├── app-shell.tsx       # Shared shell: sidebar, mobile header/nav, main
+│   ├── nav-links.tsx       # Client nav links with active state (sidebar/bottom)
+│   └── page-header.tsx     # Consistent page heading rhythm
 ├── tests/
-│   ├── setup.ts        # jest-dom matchers for Vitest
-│   └── home.test.tsx   # Foundation screen smoke test
+│   ├── setup.ts            # jest-dom matchers for Vitest
+│   ├── navigation-state.ts # Mutable pathname for router mocks
+│   ├── home.test.tsx       # Home page content
+│   ├── pages.test.tsx      # Insights/Actions/Review content
+│   ├── navigation.test.tsx # Links, active state, landmarks
+│   └── app-shell.test.tsx  # Shared shell semantics
 ├── public/             # Static assets (currently empty)
 ├── PRODUCT.md          # Long-term product source of truth
 ├── AGENTS.md           # Rules for AI coding agents
@@ -115,5 +131,7 @@ cp .env.example .env.local
 Supabase, database, authentication, Insights, Remember/Apply/Explore,
 Actions, deadlines, reminders, outcomes, reflections, search, embeddings, AI
 providers, social features, payments, analytics, and the Chrome extension all
-belong to later milestones. See `PRODUCT.md` — it describes direction only
+belong to later milestones. The `/insights`, `/actions`, and `/review` routes
+exist as empty states only — no product functionality lives behind them yet.
+See `PRODUCT.md` — it describes direction only
 and does not authorize building those features early.

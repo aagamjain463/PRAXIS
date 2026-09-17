@@ -1,20 +1,24 @@
-import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { cleanup, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it } from "vitest";
 import Home from "../app/page";
 
-describe("Praxis foundation screen", () => {
-  it("renders the Praxis heading, tagline, and supporting copy", () => {
+afterEach(() => {
+  cleanup();
+});
+
+describe("Home page", () => {
+  it("renders the Home heading, tagline, and supporting copy", () => {
     render(<Home />);
 
     expect(
-      screen.getByRole("heading", { level: 1, name: "Praxis" }),
+      screen.getByRole("heading", { level: 1, name: "Home" }),
     ).toBeInTheDocument();
     expect(
       screen.getByText("Turn what you learn into what you do."),
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        "Capture what matters. Turn useful knowledge into meaningful action.",
+        "Praxis will help you capture what matters, understand why it matters, and turn useful knowledge into meaningful action.",
       ),
     ).toBeInTheDocument();
   });
