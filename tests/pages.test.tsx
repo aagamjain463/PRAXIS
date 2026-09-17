@@ -1,8 +1,8 @@
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
-import ActionsPage from "../app/actions/page";
-import InsightsPage from "../app/insights/page";
-import ReviewPage from "../app/review/page";
+import ActionsPage from "../app/(app)/actions/page";
+import InsightsPage from "../app/(app)/insights/page";
+import ReviewPage from "../app/(app)/review/page";
 
 afterEach(() => {
   cleanup();

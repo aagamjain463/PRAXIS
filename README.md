@@ -9,25 +9,38 @@ See [`PRODUCT.md`](./PRODUCT.md) for the long-term product direction and
 
 ## Current milestone
 
-**Milestone 3 — Supabase Foundation.** The repository now contains the secure
-Supabase connection infrastructure in addition to the earlier milestones:
+**Milestone 4 — Authentication & User Foundation.** The repository now has
+real email/password authentication on top of the earlier milestones:
 
 - Next.js (App Router) + React + TypeScript + Tailwind CSS + ESLint
+- Email/password signup, login, and logout via real Supabase Auth
+  (no OAuth yet)
+- Routes: `/login`, `/signup`, `/auth/confirm` (email-confirmation
+  callback), plus the authenticated product space `/` (Home), `/insights`,
+  `/actions`, `/review` — still honest empty states, no product
+  functionality yet
+- Server-enforced route protection: logged-out visitors are redirected to
+  `/login` during server rendering; logged-in visitors are redirected away
+  from `/login` and `/signup`
+- Cookie-based SSR sessions with proxy session refresh, so logins survive
+  browser refreshes
+- Minimal signed-in identity (email) plus logout in the sidebar and mobile
+  header; no profiles table, no profile system
 - Shared application shell: persistent desktop sidebar, mobile header plus
   bottom navigation, and a consistent content area
-- Routes: `/` (Home), `/insights`, `/actions`, `/review` — honest empty
-  states only, no product functionality yet
 - Supabase client infrastructure (`@supabase/supabase-js` + `@supabase/ssr`):
-  browser client factory (`lib/supabase/client.ts`) and cookie-aware server
-  client factory (`lib/supabase/server.ts`), ready for future authentication
+  browser client factory (`lib/supabase/client.ts`), cookie-aware server
+  client factory (`lib/supabase/server.ts`), and session-refresh proxy
+  (`proxy.ts` + `lib/supabase/middleware.ts`)
 - Clear missing-configuration errors; no service-role key anywhere
 - Developer connectivity check via `npm run supabase:check`
 - A lightweight test setup (Vitest + Testing Library) covering pages,
-  navigation links, active state, shell semantics, and Supabase configuration
+  navigation, shell semantics, Supabase configuration, and auth behavior
+  (validation, error mapping, redirect safety, actions, route protection)
 - `PRODUCT.md`, `AGENTS.md`, `.env.example`, and this README
 
-No authentication, database tables, Insights, Actions, AI, reminders, or
-browser extension functionality exists yet — that is intentional.
+No database tables, Insights, Actions, AI, reminders, or browser extension
+functionality exists yet — that is intentional.
 
 ## Tech stack
 
@@ -94,22 +107,44 @@ npm run start
 ```text
 Praxis/
 ├── app/
-│   ├── actions/page.tsx    # Actions empty state
-│   ├── insights/page.tsx   # Insights empty state
-│   ├── review/page.tsx     # Review empty state
-│   ├── layout.tsx          # Root layout + metadata + AppShell
-│   ├── page.tsx            # Home empty state
+│   ├── (app)/              # Authenticated product space (server-protected)
+│   │   ├── layout.tsx      # requireUser + AppShell with identity/logout
+│   │   ├── page.tsx        # Home empty state
+│   │   ├── actions/page.tsx
+│   │   ├── insights/page.tsx
+│   │   └── review/page.tsx
+│   ├── (auth)/             # Logged-out auth screens (no app shell)
+│   │   ├── layout.tsx      # Redirects signed-in users into the app
+│   │   ├── login/page.tsx  # Login screen (supports ?error=/notice codes)
+│   │   └── signup/page.tsx # Signup screen + confirmation state
+│   ├── auth/confirm/route.ts # Email-confirmation callback (verifyOtp)
+│   ├── layout.tsx          # Root layout + metadata + fonts
 │   ├── globals.css         # Tailwind + theme tokens
 │   └── favicon.ico
 ├── components/
 │   ├── app-shell.tsx       # Shared shell: sidebar, mobile header/nav, main
 │   ├── nav-links.tsx       # Client nav links with active state (sidebar/bottom)
-│   └── page-header.tsx     # Consistent page heading rhythm
+│   ├── page-header.tsx     # Consistent page heading rhythm
+│   └── auth/
+│       ├── auth-card.tsx       # Shared auth branding + card layout
+│       ├── auth-field.tsx      # Labeled input + field error wiring
+│       ├── login-form.tsx      # Login form (useActionState, pending state)
+│       ├── signup-form.tsx     # Signup form + check-email state
+│       ├── sign-out-button.tsx # Server-rendered logout form
+│       └── sign-out-submit.tsx # Logout pending label (client island)
 ├── lib/
+│   ├── auth/
+│   │   ├── actions.ts      # login/signup/logout Server Actions
+│   │   ├── user.ts         # getCurrentUser (authoritative) + requireUser
+│   │   ├── validation.ts   # Shared email/password rules (client + server)
+│   │   ├── errors.ts       # Supabase errors → safe user-facing copy
+│   │   └── redirect.ts     # Same-origin redirect sanitizer
 │   └── supabase/
 │       ├── client.ts       # Browser Supabase client factory
 │       ├── server.ts       # Cookie-aware server Supabase client factory
+│       ├── middleware.ts   # Session-refresh (used by proxy.ts)
 │       └── env.ts          # Public config validation (names vars, never values)
+├── proxy.ts                # Next.js 16 session-refresh entry point
 ├── scripts/
 │   └── check-supabase.mjs  # Harmless connectivity check (npm run supabase:check)
 ├── tests/
@@ -118,9 +153,17 @@ Praxis/
 │   ├── home.test.tsx       # Home page content
 │   ├── pages.test.tsx      # Insights/Actions/Review content
 │   ├── navigation.test.tsx # Links, active state, landmarks
-│   ├── app-shell.test.tsx  # Shared shell semantics
+│   ├── app-shell.test.tsx  # Shared shell semantics + identity/logout
 │   ├── supabase-env.test.ts    # Config validation + browser client wiring
-│   └── supabase-server.test.ts # Server client wiring (mocked cookies)
+│   ├── supabase-server.test.ts # Server client wiring (mocked cookies)
+│   ├── auth-validation.test.ts # Email/password/confirm rules
+│   ├── auth-errors.test.ts     # Safe error mapping
+│   ├── auth-redirect.test.ts   # Open-redirect sanitizer
+│   ├── auth-forms.test.tsx     # Form rendering, validation, error/confirm states
+│   ├── auth-actions.test.ts    # Login/signup/logout action behavior (mocked)
+│   ├── auth-user.test.ts       # getCurrentUser/requireUser behavior (mocked)
+│   ├── auth-layout.test.tsx    # Auth-group redirect behavior (mocked)
+│   └── auth-confirm.test.ts    # Confirm-route verify/fallback/redirects (mocked)
 ├── public/             # Static assets (currently empty)
 ├── PRODUCT.md          # Long-term product source of truth
 ├── AGENTS.md           # Rules for AI coding agents
@@ -183,19 +226,30 @@ no users, no data, no service-role key) and never prints secret values.
 
 Unit tests and the production build do not need live credentials.
 
-### Deferred to the authentication milestone
+### Supabase dashboard settings for auth
 
-The session-refresh proxy (`proxy.ts`) and any signup/login/logout UI are
-intentionally not part of this milestone. They will be added when
-authentication is implemented.
+In the Supabase dashboard for this project, verify:
+
+1. **Authentication → URL Configuration → Site URL** is the app origin
+   (e.g. `http://localhost:3000` for local development). Confirmation links
+   are built from this when no explicit redirect is passed.
+2. **Additional Redirect URLs** includes the same origin (e.g.
+   `http://localhost:3000/**`), so `/auth/confirm` callbacks are accepted.
+3. **Authentication → Sign In / Sign Up → Confirm email**: leave this ON
+   (the default). Praxis handles both outcomes — immediate session or
+   emailed confirmation link — so no change is needed either way. Do not
+   disable security features just to simplify testing.
+4. No service-role key is needed anywhere in Praxis. Never add one to
+   `.env.local` or the dashboard's exposed configuration.
 
 ## What is intentionally NOT implemented
 
-Authentication, database tables, Insights, Remember/Apply/Explore,
+Database tables, Insights, Remember/Apply/Explore,
 Actions, deadlines, reminders, outcomes, reflections, search, embeddings, AI
 providers, social features, payments, analytics, and the Chrome extension all
-belong to later milestones. Only the Supabase connection infrastructure
-exists — no product tables, no auth flows, no product functionality.
+belong to later milestones. Only real email/password authentication and the
+Supabase connection infrastructure exist — no product tables, no OAuth, no
+product functionality.
 The `/insights`, `/actions`, and `/review` routes
 exist as empty states only — no product functionality lives behind them yet.
 See `PRODUCT.md` — it describes direction only

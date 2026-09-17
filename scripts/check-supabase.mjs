@@ -109,7 +109,10 @@ console.log(`  Key: set (${publishableKey.length} chars, ${keyFormat})`);
 
 let response;
 try {
+  // The Supabase gateway requires the publishable (public) key even on the
+  // health endpoint; without it the project answers HTTP 401.
   response = await fetch(`${projectUrl.origin}/auth/v1/health`, {
+    headers: { apikey: publishableKey },
     signal: AbortSignal.timeout(10000),
   });
 } catch (error) {

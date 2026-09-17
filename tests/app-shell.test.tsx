@@ -32,7 +32,7 @@ describe("AppShell", () => {
   it("renders shared navigation, branding, and page content", () => {
     navigationMockState.pathname = "/";
     render(
-      <AppShell>
+      <AppShell userEmail="aagam@example.com">
         <p>Test page content</p>
       </AppShell>,
     );
@@ -58,10 +58,24 @@ describe("AppShell", () => {
     ).toBeInTheDocument();
   });
 
+  it("shows the signed-in identity with a logout control", () => {
+    navigationMockState.pathname = "/";
+    render(
+      <AppShell userEmail="aagam@example.com">
+        <p>Test page content</p>
+      </AppShell>,
+    );
+
+    // Sidebar footer and mobile header both surface the account.
+    expect(screen.getAllByText("aagam@example.com")).toHaveLength(2);
+    const logoutButtons = screen.getAllByRole("button", { name: "Log out" });
+    expect(logoutButtons).toHaveLength(2);
+  });
+
   it("marks Home as current on the root pathname", () => {
     navigationMockState.pathname = "/";
     render(
-      <AppShell>
+      <AppShell userEmail="aagam@example.com">
         <p>Test page content</p>
       </AppShell>,
     );
