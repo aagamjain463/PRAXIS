@@ -30,7 +30,7 @@ Insights have a generated Postgres full-text vector and optional pgvector embedd
 
 ## Notifications
 
-Actions can create in-app or email reminders. Vercel Cron calls `/api/jobs/reminders` with `CRON_SECRET`. A Postgres claim function prevents concurrent jobs from sending the same reminder twice. In-app notifications work with Supabase alone; email requires Resend configuration. Timezone and quiet-hour preferences are stored for later scheduler expansion.
+Actions can create in-app or email reminders. Vercel Cron calls `/api/jobs/reminders` with `CRON_SECRET`. A Postgres claim function prevents concurrent jobs from sending the same reminder twice. In-app notifications work with Supabase alone; email requires Resend configuration. Timezone and quiet-hour preferences are stored for later scheduler expansion. `vercel.json` uses a Hobby-compatible daily sweep; Pro or an external scheduler can call the same route more frequently.
 
 ## Security decisions
 
