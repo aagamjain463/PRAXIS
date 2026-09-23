@@ -1,0 +1,19 @@
+{
+  "manifest_version": 3,
+  "name": "Praxis Capture",
+  "version": "1.0.0",
+  "description": "Capture useful ideas into Praxis without leaving the page.",
+  "permissions": ["activeTab", "storage", "contextMenus"],
+  "host_permissions": ["https://*/api/extension/*", "http://localhost:*/api/extension/*"],
+  "action": {
+    "default_title": "Save to Praxis",
+    "default_popup": "popup.html"
+  },
+  "background": {
+    "service_worker": "service-worker.js",
+    "type": "module"
+  },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'"
+  }
+}

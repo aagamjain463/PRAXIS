@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en">
+  <head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Save to Praxis</title><link rel="stylesheet" href="popup.css"></head>
+  <body>
+    <header><span class="mark">P</span><strong>Praxis</strong><button id="settings" title="Connection settings" aria-label="Connection settings">⚙</button></header>
+    <main>
+      <form id="capture-form">
+        <label>Useful idea<textarea id="content" maxlength="10000" rows="5" placeholder="Selected text or the idea worth keeping…" required></textarea></label>
+        <div class="source"><span id="page-title">Current page</span><small id="page-url"></small></div>
+        <label>Quick note <small>optional</small><input id="note" maxlength="2000" placeholder="Why did this stand out?"></label>
+        <label id="timestamp-label" hidden>Video timestamp (seconds)<input id="timestamp" type="number" min="0"></label>
+        <p id="status" role="status" aria-live="polite"></p>
+        <button id="save" type="submit">Save to Inbox</button>
+      </form>
+      <form id="settings-form" hidden>
+        <p>Paste a capture token from Praxis → Settings → Browser extension.</p>
+        <label>Praxis URL<input id="praxis-url" type="url" placeholder="https://your-praxis.app" required></label>
+        <label>Capture token<input id="token" type="password" autocomplete="off" placeholder="px_…" required></label>
+        <button type="submit">Save connection</button>
+        <button id="cancel-settings" class="secondary" type="button">Cancel</button>
+      </form>
+    </main>
+    <script src="popup.js"></script>
+  </body>
+</html>

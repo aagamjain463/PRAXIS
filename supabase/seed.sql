@@ -1,0 +1,4 @@
+-- Production-safe by design: no user-owned rows are inserted automatically.
+-- Create a development user through Supabase Auth, then use the real Praxis UI
+-- to produce demo captures, insights, actions, and outcomes. This exercises the
+-- same RLS and product flows as a real account without inventing dashboard data.
