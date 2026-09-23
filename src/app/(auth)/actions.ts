@@ -39,14 +39,6 @@ export async function signup(formData: FormData) {
   redirect(data.session ? "/onboarding" : `/verify-email?email=${encodeURIComponent(email.data)}`);
 }
 
-export async function signInWithGoogle() {
-  if (!hasSupabaseEnv()) fail("/login", "Connect Supabase to enable accounts.");
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.signInWithOAuth({ provider: "google", options: { redirectTo: `${siteUrl()}/auth/callback?next=/onboarding` } });
-  if (error || !data.url) fail("/login", "Google sign-in is not configured.");
-  redirect(data.url);
-}
-
 export async function forgotPassword(formData: FormData) {
   if (!hasSupabaseEnv()) fail("/forgot-password", "Connect Supabase to enable accounts.");
   const email = emailSchema.safeParse(formData.get("email"));

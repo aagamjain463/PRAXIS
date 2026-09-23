@@ -702,9 +702,6 @@ dialog::backdrop { background: rgba(19, 31, 25, .42); backdrop-filter: blur(4px)
 .stack-form label small { color: var(--muted); font-weight: 400; }
 .stack-form .button { width: 100%; }
 .form-row { display: flex; justify-content: flex-end; color: var(--green); font-size: 12px; }
-.divider { height: 1px; margin: 28px 0; position: relative; background: var(--line); text-align: center; }
-.divider span { position: relative; top: -9px; padding: 0 10px; background: #fffef9; color: #89908c; font-size: 11px; }
-.full-button { width: 100%; }
 .auth-switch { margin-top: 24px; text-align: center; font-size: 13px; }
 .auth-switch a { color: var(--green); font-weight: 700; }
 .form-error, .form-success, .form-notice { margin: 20px 0; padding: 12px 14px; border-radius: 8px; font-size: 13px; line-height: 1.5; }
